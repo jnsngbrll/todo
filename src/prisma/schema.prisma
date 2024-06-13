@@ -21,28 +21,31 @@ model User {
   image          String?
   hashedPassword String?
 
-  accounts  Account[]
-  sessions  Session[]
   tasks     Task[]
   projects  Project[]
-  favorites Favorite[]
+  accounts  Account[]
+  sessions  Session[]
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
 }
 
 model Task {
-  id            String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String  @db.ObjectId
-  title         String?
-  description   String?
-  project       String?
-  isCompleted   Boolean? @default(false)
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  title       String?
+  description String?
+  project     String?
+  isCompleted Boolean? @default(false)
 
   user User @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("tasks")
 }
 
 model Project {
@@ -54,10 +57,8 @@ model Project {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
 
-model Favorite {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  @@map("projects")
 }
 
 model Account {
@@ -80,6 +81,8 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+
+  @@map("accounts")
 }
 
 model Session {
@@ -91,4 +94,6 @@ model Session {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("sessions")
 }
