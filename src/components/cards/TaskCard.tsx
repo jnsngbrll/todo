@@ -12,7 +12,7 @@ interface TaskCardProps {
   id: string;
   title: string;
   description: string;
-  completed: boolean;
+  isCompleted: boolean;
   createdAt: string;
 }
 
@@ -20,7 +20,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
   id,
   title,
   description,
-  completed,
+  isCompleted,
   createdAt,
 }) => {
   const { setAddTaskModalShow, setTaskModalTitle, fetchTasks } =
@@ -32,10 +32,10 @@ const TaskCard: React.FC<TaskCardProps> = ({
       setIsLoading(true);
       await axios.put('/api/task/', {
         id,
-        completed: completed === false ? true : false,
+        isCompleted: isCompleted === false ? true : false,
       });
       setIsLoading(false);
-      if (completed === false) {
+      if (isCompleted === false) {
         toast.success('1 task completed!');
       }
       fetchTasks();
@@ -79,7 +79,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
   ) : (
     <div
       className={`${
-        completed ? 'bg-white shadow-xl' : 'bg-gray-100'
+        isCompleted ? 'bg-white shadow-xl' : 'bg-gray-100'
       } p-4 rounded-md flex flex-col justify-between gap-y-12`}
     >
       <div className="space-y-2">
@@ -91,7 +91,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
       </div>
       <div className="flex justify-between">
         <button onClick={() => handleCompletedButtonClick(id)}>
-          {!completed ? (
+          {!isCompleted ? (
             <p className="text-xs py-1 px-2 bg-red-500 text-white rounded-full">
               Incomplete
             </p>

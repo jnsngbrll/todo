@@ -9,7 +9,7 @@ interface ContextProviderProps {
   children: ReactNode;
 }
 
-interface ICategory {
+interface IProject {
   id: string;
   title: string;
 }
@@ -24,7 +24,7 @@ interface TasksProps {
 }
 
 export default function ContextProvider({ children }: ContextProviderProps) {
-  const [categories, setCategpries] = useState<ICategory[]>([]);
+  const [projects, setProjects] = useState<IProject[]>([]);
   const [addTaskModalShow, setAddTaskModalShow] = useState<boolean>(false);
   const [tasks, setTasks] = useState<TasksProps[]>([]);
   const [taskModalTitle, setTaskModalTitle] = useState<string>('Add task');
@@ -39,8 +39,8 @@ export default function ContextProvider({ children }: ContextProviderProps) {
   };
 
   const contextValue = {
-    categories,
-    setCategpries,
+    projects,
+    setProjects,
     addTaskModalShow,
     setAddTaskModalShow,
     tasks,

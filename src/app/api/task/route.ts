@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     const user = await getCurrentUser();
 
     const body = await req.json();
-    const { title, description, category } = body;
+    const { title, description, project } = body;
 
     if (!user) {
       return NextResponse.json(
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       data: {
         title,
         description,
-        category,
+        project,
         userId: user.id,
       },
     });
@@ -91,7 +91,7 @@ export async function GET(req: Request) {
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { id, completed } = body;
+    const { id, isCompleted } = body;
 
     const user = await getCurrentUser();
     if (!user?.id) {
@@ -100,7 +100,7 @@ export async function PUT(req: Request) {
 
     const updatedTask = await prisma.task.update({
       where: { id },
-      data: { completed },
+      data: { isCompleted },
     });
 
     return NextResponse.json(updatedTask);

@@ -26,7 +26,7 @@ export default function AuthForm() {
 
   useEffect(() => {
     if (session?.status === 'authenticated') {
-      router.push('/tasks/all');
+      router.push('/project/all');
     }
   }, [session?.status, router]);
 
@@ -73,7 +73,7 @@ export default function AuthForm() {
           }
           if (callback?.ok && !callback?.error) {
             toast.success('You are successfully logged in!');
-            router.push('/tasks/all');
+            router.push('/project/all');
           }
         })
         .finally(() => setIsLoading(false));
@@ -89,7 +89,7 @@ export default function AuthForm() {
         }
         if (callback?.ok && !callback?.error) {
           toast.success('You are successfully logged in!');
-          router.push('/tasks/all');
+          router.push('/project/all');
         }
       })
       .finally(() => setIsLoading(false));

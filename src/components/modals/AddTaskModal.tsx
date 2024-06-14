@@ -12,7 +12,7 @@ import Button from '@/components/elements/Button';
 import getActiveList from '@/actions/getActiveList';
 
 export default function AddTaskModal() {
-  const { categories, setAddTaskModalShow, taskModalTitle, fetchTasks } =
+  const { projects, setAddTaskModalShow, taskModalTitle, fetchTasks } =
     useContext(Context);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [description, setDescription] = useState<string>('');
@@ -25,7 +25,7 @@ export default function AddTaskModal() {
   const { register, handleSubmit } = useForm<FieldValues>({
     defaultValues: {
       title: '',
-      category: '',
+      project: '',
       description: '',
     },
   });
@@ -39,12 +39,12 @@ export default function AddTaskModal() {
       setIsLoading(true);
       const response = await axios.post('/api/task', {
         ...data,
-        category: taskCategory,
+        project: taskCategory,
         description,
       });
       setAddTaskModalShow(false);
       fetchTasks();
-      router.push(`/tasks/${response.data.category}`);
+      router.push(`/project/${response.data.project}`);
     } catch (error) {
       console.error('Failed to add task:', error);
     } finally {
@@ -89,9 +89,9 @@ export default function AddTaskModal() {
           onChange={handleTaskCategoryChange}
           className="border p-2 text-xs rounded-md outline-none"
         >
-          {categories.map((category: { id: string; title: string }) => (
-            <option key={category.id} value={category.title}>
-              {category.title}
+          {projects.map((project: { id: string; title: string }) => (
+            <option key={project.id} value={project.title}>
+              {project.title}
             </option>
           ))}
         </select>

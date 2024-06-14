@@ -22,8 +22,8 @@ import {
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 export default function Sidebar() {
-  const { categories, setCategpries, tasks } = useContext(Context);
-  const [addCategory, setAddCategory] = useState<boolean>(false);
+  const { projects, setProjects, tasks } = useContext(Context);
+  const [addProject, setAddProject] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<FieldValues>({
     defaultValues: {
@@ -35,39 +35,54 @@ export default function Sidebar() {
   const activeList = getActiveList();
   const router = useRouter();
 
-  // ASYNCHRONOUS FUNCTION THAT WILL CREATE A NEW CATEGORY
+  // ASYNCHRONOUS FUNCTION THAT WILL CREATE A NEW PROJECT
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
       setIsLoading(true);
-      const response = await axios.post('/api/category', data);
-      router.push(`/tasks/${response.data.title}`);
-      fetchCategories();
-      setAddCategory(false);
+
+      const isProjoctExist = projects.filter(
+        (project: { title: string }) => project.title === data.title
+      );
+
+      if (data.title === 'All' || 'all') {
+        router.push(`/project/all`);
+        setAddProject(false);
+      } else {
+        if (isProjoctExist) {
+          router.push(`/project/${data.title}`);
+          setAddProject(false);
+        }
+      }
+
+      const response = await axios.post('/api/project', data);
+      router.push(`/project/${response.data.title}`);
+      fetchProjects();
+      setAddProject(false);
     } catch (error) {
-      console.error('Failed to add category:', error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // GET ALL CREATED CATEGORY
-  const fetchCategories = async () => {
-    const response = await axios.get('/api/category');
-    setCategpries(response.data);
+  // GET ALL CREATED PROJECT
+  const fetchProjects = async () => {
+    const response = await axios.get('/api/project');
+    setProjects(response.data);
   };
   useEffect(() => {
-    fetchCategories();
+    fetchProjects();
   }, []);
 
-  // ASYNCHRONOUS FUNCTION THAT WILL DELETE A CATEGORY
-  const handleDeleteCategory = async (id: string) => {
+  // ASYNCHRONOUS FUNCTION THAT WILL DELETE A PROJECT
+  const handleDeleteProject = async (id: string) => {
     try {
       setIsLoading(true);
-      await axios.delete('/api/category', {
+      await axios.delete('/api/project', {
         data: { id },
       });
-      fetchCategories();
-      router.push('/tasks/all');
+      fetchProjects();
+      router.push('/project/all');
     } catch (error) {
       console.error(error);
     } finally {
@@ -76,12 +91,12 @@ export default function Sidebar() {
   };
 
   const countOfTaskForEachList = (title: string) => {
-    return tasks.filter((task: { category: string }) => task.category === title)
+    return tasks.filter((task: { project: string }) => task.project === title)
       .length;
   };
 
   return (
-    <aside className="w-72 p-4 flex flex-col justify-between bg-white rounded-md shadow-xl space-y-2">
+    <aside className="w-96 p-4 flex flex-col justify-between bg-white rounded-md shadow-xl space-y-2">
       <div className="space-y-4">
         <div className="pb-4 border-b flex items-center gap-x-2">
           <img
@@ -103,13 +118,13 @@ export default function Sidebar() {
             ) : (
               <IoList size={16} />
             )}
-            <h1>{isLoading ? 'Processing...' : 'Your list'}</h1>
+            <h1>{isLoading ? 'Processing...' : 'My Projects'}</h1>
           </div>
-          <button onClick={() => setAddCategory(!addCategory)}>
-            {!addCategory ? <IoAdd /> : <IoClose />}
+          <button onClick={() => setAddProject(!addProject)}>
+            {!addProject ? <IoAdd /> : <IoClose />}
           </button>
         </div>
-        {addCategory && (
+        {addProject && (
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex items-center relative"
@@ -117,48 +132,53 @@ export default function Sidebar() {
             <Input
               id="title"
               type="text"
-              placeholder="New list"
+              placeholder="Add new project"
               required
               register={register}
-              className="pr-10 text-sm"
+              className="pr-14 text-sm"
             />
             <button
               type="submit"
-              className="absolute right-4 p-1 bg-primary text-white rounded-md -mr-2"
+              className="absolute right-2 h-full px-3 bg-primary text-white rounded-r-md -mr-2"
             >
               <IoCheckmarkSharp />
             </button>
           </form>
         )}
         <div className="flex flex-col space-y-2">
-          <Link
-            href="/tasks/all"
-            className={`py-2 px-4 rounded-md text-sm ${
+          <div
+            className={`flex items-center justify-between px-4 rounded-md group ${
               activeList === 'all'
                 ? 'bg-primary text-white'
-                : 'text-gray-500 hover:bg-gray-50'
+                : 'text-gray-500 hover:bg-gray-100'
             }`}
           >
-            All
-          </Link>
-          {categories.map((category: { id: string; title: string }) => (
+            <Link
+              href="/project/all"
+              className="w-full py-2 text-sm font-medium"
+            >
+              All
+            </Link>
+            <p className="text-sm">{tasks.length}</p>
+          </div>
+          {projects.map((project: { id: string; title: string }) => (
             <div
-              key={category.id}
+              key={project.id}
               className={`flex items-center justify-between px-4 rounded-md group ${
-                activeList === category.title
+                activeList === project.title
                   ? 'bg-primary text-white'
                   : 'text-gray-500 hover:bg-gray-100'
               }`}
             >
-              <p>{countOfTaskForEachList(category.title)}</p>
               <Link
-                href={`/tasks/${category.title}`}
+                href={`/project/${project.title}`}
                 className="w-full py-2 text-sm font-medium"
               >
-                {category.title}
+                {project.title}
               </Link>
+              <p className="text-sm">{countOfTaskForEachList(project.title)}</p>
               <button
-                onClick={() => handleDeleteCategory(category.id)}
+                onClick={() => handleDeleteProject(project.id)}
                 className="hidden group-hover:block"
               >
                 <IoEllipsisVerticalSharp />
