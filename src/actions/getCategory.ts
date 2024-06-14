@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 
-export default function getCategory() {
+export default function GetCategory() {
   try {
     const pathname = usePathname();
     const category = pathname.split('/').filter(Boolean).pop();

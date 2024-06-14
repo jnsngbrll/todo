@@ -7,8 +7,8 @@ export default function RootPage() {
         <div className="hidden md:block col-span-2 space-y-4">
           <h1 className="text-9xl font-black">ToDo.</h1>
           <p className="text-2xl text-white text-balance shrink animate-pulse">
-            Let's Manage your tasks, set priorities, and stay organized with
-            customizable lists and easy-to-use features.
+            Let&apos;s Manage your tasks, set priorities, and stay organized
+            with customizable lists and easy-to-use features.
           </p>
         </div>
         <AuthForm />
